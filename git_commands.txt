@@ -1,0 +1,34 @@
+# Common Git Commands
+
+# Check the status of your working directory
+git status
+
+# Add all changes to staging
+git add .
+
+# Add a specific file to staging
+# git add path/to/file
+
+# Commit staged changes with a message
+git commit -m "Your commit message"
+
+# Pull the latest changes from the remote repository
+git pull
+
+# Push your commits to the remote repository
+git push
+
+# Set upstream for a new branch (if needed)
+git push --set-upstream origin your-branch-name
+
+# View commit history
+git log --oneline --graph --all
+
+# Switch to another branch
+git checkout branch-name
+
+# Create a new branch and switch to it
+git checkout -b new-branch-name 
+
+dart pub global activate flutterfire_cli
+flutterfire configure 

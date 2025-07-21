@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "831475007012",
+    "project_id": "bookmyboti",
+    "storage_bucket": "bookmyboti.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831475007012:android:604828bced842a4ef7e2b1",
+        "android_client_info": {
+          "package_name": "com.bookmyboti.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYli8Mejf1Jl3YcCUkUng_AoGfZGPHmbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
