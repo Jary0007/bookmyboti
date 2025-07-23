@@ -7,28 +7,33 @@ import 'package:google_sign_in/google_sign_in.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'BookMyBoti',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: AuthGate(),
+      home: const AuthGate(),
     );
   }
 }
 
 class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
         }
         if (!snapshot.hasData) {
           return SignInScreen();
@@ -40,35 +45,51 @@ class AuthGate extends StatelessWidget {
 }
 
 class SignInScreen extends StatelessWidget {
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  SignInScreen({super.key});
+
   Future<void> _signInWithGoogle(BuildContext context) async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) return;
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+    final GoogleSignInAccount? account = await _googleSignIn.signIn();
+    if (account == null) return;
+    final GoogleSignInAuthentication auth = await account.authentication;
+    final String? accessToken = auth.accessToken;
+
     final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
+      accessToken: auth.accessToken,
+      idToken: auth.idToken,
     );
+
+    if (!context.mounted) return;
+
     UserCredential userCredential =
         await FirebaseAuth.instance.signInWithCredential(credential);
-    // Check if user exists in Firestore, if not, create with default role
+    // Check if user exists in Firestore, if not, prompt for role selection
     final userDoc = FirebaseFirestore.instance
         .collection('users')
         .doc(userCredential.user!.uid);
     final doc = await userDoc.get();
-    if (!doc.exists) {
-      await userDoc.set({'role': 'Customer'}); // Default role
+    if (!doc.exists || !(doc.data()?.containsKey('role') ?? false)) {
+      // Show role selection dialog
+      final role = await showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const RoleSelectionDialog(),
+      );
+      if (role != null) {
+        await userDoc.set({'role': role}, SetOptions(merge: true));
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign In')),
+      appBar: AppBar(title: const Text('Sign In')),
       body: Center(
         child: ElevatedButton.icon(
-          icon: Icon(Icons.login),
-          label: Text('Sign in with Google'),
+          icon: const Icon(Icons.login),
+          label: const Text('Sign in with Google'),
           onPressed: () => _signInWithGoogle(context),
         ),
       ),
@@ -76,9 +97,34 @@ class SignInScreen extends StatelessWidget {
   }
 }
 
+class RoleSelectionDialog extends StatelessWidget {
+  const RoleSelectionDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Select Your Role'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop('Customer'),
+            child: const Text('Customer'),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop('Boti'),
+            child: const Text('Boti (Cook)'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class RoleRedirectScreen extends StatelessWidget {
   final User user;
-  RoleRedirectScreen({required this.user});
+  const RoleRedirectScreen({super.key, required this.user});
 
   Future<String> _getUserRole() async {
     final doc = await FirebaseFirestore.instance
@@ -94,12 +140,13 @@ class RoleRedirectScreen extends StatelessWidget {
       future: _getUserRole(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
         }
         if (snapshot.data == 'Boti') {
-          return BotiHomeScreen();
+          return const BotiHomeScreen();
         } else {
-          return CustomerHomeScreen();
+          return const CustomerHomeScreen();
         }
       },
     );
@@ -107,21 +154,25 @@ class RoleRedirectScreen extends StatelessWidget {
 }
 
 class CustomerHomeScreen extends StatelessWidget {
+  const CustomerHomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Customer Home')),
-      body: Center(child: Text('Welcome, Customer!')),
+      appBar: AppBar(title: const Text('Customer Home')),
+      body: const Center(child: Text('Welcome, Customer!')),
     );
   }
 }
 
 class BotiHomeScreen extends StatelessWidget {
+  const BotiHomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Boti Home')),
-      body: Center(child: Text('Welcome, Boti!')),
+      appBar: AppBar(title: const Text('Boti Home')),
+      body: const Center(child: Text('Welcome, Boti!')),
     );
   }
 }

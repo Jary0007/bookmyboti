@@ -7,6 +7,11 @@
 
 # The following line activates a set of recommended lints for Flutter apps,
 # packages, and plugins designed to encourage good coding practices.
+# Note: If you see an error about 'package:flutter_lints/flutter.yaml' not found,
+# make sure you have 'flutter_lints' in your pubspec.yaml under dev_dependencies:
+#
+# dev_dependencies:
+#   flutter_lints: ^2.0.0
 include: package:flutter_lints/flutter.yaml
 
 linter:
