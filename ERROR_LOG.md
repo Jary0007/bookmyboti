@@ -85,3 +85,39 @@ Updated `google_sign_in` dependency to `^6.1.5` in `pubspec.yaml`.
 Fixed
 
 --- 
+
+---
+
+## How to Fix
+
+### 1. **Start an Emulator**
+- Open Android Studio.
+- Go to **Tools > Device Manager** (or AVD Manager).
+- Click the play ▶️ button next to your emulator (e.g., Pixel 9) to start it.
+- Wait until the emulator is fully booted (you see the Android home screen).
+
+### 2. **Check Device Connection**
+- In your terminal, run:
+  ```sh
+  adb devices
+  ```
+- You should see a list of connected devices/emulators. Example:
+  ```
+  List of devices attached
+  emulator-5554   device
+  ```
+
+### 3. **Install the APK Again**
+- Once the emulator is running and detected, run:
+  ```sh
+  adb install build/app/outputs/flutter-apk/app-release.apk
+  ```
+
+---
+
+**If you still see “no devices/emulators found”:**
+- Make sure the emulator is running and not crashing.
+- Try restarting the emulator and your computer if needed.
+- If using a physical device, ensure USB debugging is enabled and the device is connected.
+
+Let me know if you need help with any of these steps or if you get a different error! 
